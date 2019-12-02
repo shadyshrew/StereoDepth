@@ -115,10 +115,17 @@ if __name__=='__main__':
         else:
             disparity_img = compute_conventional_disparity(left_img, right_img)
         test_point1 = disparity_img[300][100]
+         
         test_point2 = disparity_img[1500][1000]
         print(test_point1,test_point2)
-        d1 = 3.6*12.8016/test_point1
-        d2 = 3.6*12.8016/test_point2
+        if(test_point1 == 0):
+            d1 = "Far"
+        else:
+            d1 = 3.6*12.8016/test_point1
+        if(test_point2 == 0):
+            d2 = "Far"
+        else:
+            d2 = 3.6*12.8016/test_point2
         colored_disparity = cv2.cvtColor(disparity_img,cv2.COLOR_GRAY2RGB).astype(np.uint8)
         print(np.amin(np.asarray(disparity_img)))
         #disparity_img.convertTo(image0, CV_32FC3, 1/255.0);
