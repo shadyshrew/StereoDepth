@@ -50,7 +50,7 @@ def compute_conventional_disparity(imgL, imgR):
     filteredImg = wls_filter.filter(displ, imgL, None, dispr)  # important to put "imgL" here!!!
      
     filteredImg = cv2.normalize(src=filteredImg, dst=filteredImg, beta=0, alpha=255, norm_type=cv2.NORM_MINMAX);
-    filteredImg = np.uint8(filteredImg*5)
+    filteredImg = np.uint8(filteredImg)
     #cv2.imshow('Disparity Map', filteredImg)
     #cv2.imwrite('Disparity Map.jpg',filteredImg)
     return filteredImg

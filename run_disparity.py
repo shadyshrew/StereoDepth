@@ -79,7 +79,7 @@ if __name__=='__main__':
     cap2.grab()
     print(cap1)
     print(cap2)
-    
+    cuda_flag = 0
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     height = int(cap1.get(cv2.CAP_PROP_FRAME_HEIGHT))
     width = int(cap1.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -98,22 +98,24 @@ if __name__=='__main__':
         #left_img = cv2.GaussianBlur(left_img,(5,5),10)
         #right_img = cv2.GaussianBlur(right_img,(5,5),10)
         #print('Computing background mask...')
-        bg_mask = compute_background_mask(left_img, right_img)
-        #print('Computing disparity on GPU...')
-        #disparity_img = cuda_compute_disparity(
-        #        image_left=left_img,
-        #        image_right=right_img,
-        #        foreground_left=np.ones(shape=(left_img.shape[0:1]),
-        #                                dtype=np.uint8),
-        #        foreground_right=np.ones(shape=(right_img.shape[0:1]),
-        #                                 dtype=np.uint8),
-        #        window_size= 20,
-        #        block_shape=(512, 1, 1),
-        #        grid_shape=(math.ceil(left_img.shape[0]* left_img.shape[1]/512), 1, 1)
-        #    )
-        disparity_img = compute_conventional_disparity(left_img, right_img)
-        test_point1 = 5*disparity_img[300][100]
-        test_point2 = 5*disparity_img[1500][1000]
+        if(cuda_flag == 1):
+            bg_mask = compute_background_mask(left_img, right_img)
+            print('Computing disparity on GPU...')
+            disparity_img = cuda_compute_disparity(
+                    image_left=left_img,
+                    image_right=right_img,
+                    foreground_left=np.ones(shape=(left_img.shape[0:1]),
+                                            dtype=np.uint8),
+                    foreground_right=np.ones(shape=(right_img.shape[0:1]),
+                                             dtype=np.uint8),
+                    window_size= 20,
+                    block_shape=(512, 1, 1),
+                    grid_shape=(math.ceil(left_img.shape[0]* left_img.shape[1]/512), 1, 1)
+                )
+        else:
+            disparity_img = compute_conventional_disparity(left_img, right_img)
+        test_point1 = disparity_img[300][100]
+        test_point2 = disparity_img[1500][1000]
         print(test_point1,test_point2)
         d1 = 3.6*12.8016/test_point1
         d2 = 3.6*12.8016/test_point2
