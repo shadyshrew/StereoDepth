@@ -1,29 +1,22 @@
+#######################################Imports###################################################
 from os.path import abspath, dirname, join, isfile 
 import sys
 import os
+import numpy as np
+import cv2
+import math
+#################################################################################################
+
+#######################################CUDA Path#################################################
 if (os.system("cl.exe")):
     os.environ['PATH'] += ';'+r"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\Hostx64\x64"
 if (os.system("cl.exe")):
     raise RuntimeError("cl.exe still not found, path probably incorrect")
-sys.path.append(abspath(dirname(dirname(__file__))))
+#sys.path.append(abspath(dirname(dirname(__file__))))
+#################################################################################################
 
 
-
-'''
-from utils.video_utils import (load_video_from_file_name,
-                               get_stereo_frame_from_video_capture,
-                               split_stereo_frame_into_left_and_right_frames,
-                               compute_background_mask)
-
-from utils.py_cuda_interface import cuda_compute_disparity
-'''
-#########
-
-#############
-import numpy as np
-import cv2
-import math
-
+#######################################Function Definitions######################################
 def cuda_compute_disparity(image_right, image_left,
                            window_size, foreground_right,
                            foreground_left,
@@ -70,14 +63,16 @@ def compute_background_mask(left_image, right_image):
     kernel = getStructuringElement(cv2.MORPH_RECT, (30, 30))
     dilated = dilate(bg_mask, kernel)
     return dilated
+#################################################################################################
 
+###########################################Main##################################################
 
 if __name__=='__main__':
-    output_location = 'output.avi'
-    cap1 = cv2.VideoCapture(r'..\videos\wheelhouse_bowfar1_cut.mp4')
-    cap2 = cv2.VideoCapture(r'..\videos\wheelhouse_bowfar2_cut.mp4')
-    #cap1 = cv2.VideoCapture(r'E:\Wheelhouse Bow Far\wheelhouse_bowfar1_night.avi')
-    #cap2 = cv2.VideoCapture(r'E:\Wheelhouse Bow Far\wheelhouse_bowfar2_night.avi')
+    output_location = 'output1.avi'
+    #cap1 = cv2.VideoCapture(r'..\videos\wheelhouse_bowfar1_cut.mp4')
+    #cap2 = cv2.VideoCapture(r'..\videos\wheelhouse_bowfar2_cut.mp4')
+    cap1 = cv2.VideoCapture(r'..\videos\wheelhouse_bowfar1_night.avi')
+    cap2 = cv2.VideoCapture(r'..\videos\wheelhouse_bowfar2_night.avi')
     cap1.grab()
     cap2.grab()
     print(cap1)
@@ -100,8 +95,6 @@ if __name__=='__main__':
         f2, right_img = cap2.read()
         #left_img = cv2.GaussianBlur(left_img,(5,5),10)
         #right_img = cv2.GaussianBlur(right_img,(5,5),10)
-        #cv2.imshow('Image:', left_img)
-        #cv2.waitKey(0)
         #print('Computing background mask...')
         bg_mask = compute_background_mask(left_img, right_img)
         #print('Computing disparity on GPU...')
@@ -149,4 +142,6 @@ if __name__=='__main__':
     cap1.release()
     cap2.release()
     out.release()
-    cv2.destroyAllWindows()
+    #cv2.destroyAllWindows()
+
+#################################################################################################
