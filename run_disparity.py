@@ -79,7 +79,7 @@ if __name__=='__main__':
     cap2.grab()
     print(cap1)
     print(cap2)
-    cuda_flag = 0
+    cuda_flag = 1
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     height = int(cap1.get(cv2.CAP_PROP_FRAME_HEIGHT))
     width = int(cap1.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -87,7 +87,11 @@ if __name__=='__main__':
     out = cv2.VideoWriter(output_location, fourcc,fps , (width,height))
     
     count = 0
+    CAMERA_FOCAL_LENGTH_MM = 3.6
+    DIST_BW_CAMERAS_M = 12.8016
+    CAMERA_SENSOR_WIDTH_MM = 4.54
     
+    CAMERA_FOCAL_LENGTH_PIX = (CAMERA_FOCAL_LENGTH_MM*width)/CAMERA_SENSOR_WIDTH_MM
     while(True):
         if count == 5:
             break
@@ -121,11 +125,11 @@ if __name__=='__main__':
         if(test_point1 == 0):
             d1 = "Far"
         else:
-            d1 = 3.6*12.8016/test_point1
+            d1 = CAMERA_FOCAL_LENGTH_PIX*DIST_BW_CAMERAS_M/test_point1
         if(test_point2 == 0):
             d2 = "Far"
         else:
-            d2 = 3.6*12.8016/test_point2
+            d2 = CAMERA_FOCAL_LENGTH_PIX*DIST_BW_CAMERAS_M/test_point2
         colored_disparity = cv2.cvtColor(disparity_img,cv2.COLOR_GRAY2RGB).astype(np.uint8)
         print(np.amin(np.asarray(disparity_img)))
         #disparity_img.convertTo(image0, CV_32FC3, 1/255.0);
