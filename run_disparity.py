@@ -90,7 +90,7 @@ def calculate_depth(CAMERA_FOCAL_LENGTH_PIX,DIST_BW_CAMERAS_M,dist):
 
 ###########################################Main##################################################
 
-if __name__=='__main__':
+def main():
     output_location = 'output_day3.avi'
     cap1 = cv2.VideoCapture(r'..\videos\wheelhouse_bowfar1_cut.mp4')
     cap2 = cv2.VideoCapture(r'..\videos\wheelhouse_bowfar2_cut.mp4')
@@ -184,3 +184,5 @@ if __name__=='__main__':
     #cv2.destroyAllWindows()
 
 #################################################################################################
+if __name__=='__main__':
+    main()

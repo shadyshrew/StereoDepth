@@ -50,10 +50,10 @@ def forFrame(frame_number, output_array, output_count, returned_frame):
 
 detector = VideoObjectDetection()
 detector.setModelTypeAsYOLOv3()
-detector.setModelPath("..\models\yolo.h5")
+detector.setModelPath("../models/yolo.h5")
 detector.loadModel()
 detector.detectObjectsFromVideo(
-        input_file_path=os.path.join(execution_path, "..\videos\wheelhouse_bowfar1_night.avi"), 
+        input_file_path=os.path.join(execution_path, "../videos/wheelhouse_bowfar1_cut.mp4"), 
         output_file_path=os.path.join(execution_path, "boats_detected_out_night") ,  
         frames_per_second=30,
         per_frame_function=forFrame, 
