@@ -15,7 +15,7 @@ def compute_conventional_disparity(imgL, imgR):
     #f2,imgR = cap2.read()
     
     # SGBM Parameters -----------------
-    window_size = 3                     # wsize default 3; 5; 7 for SGBM reduced size image; 15 for SGBM full size image (1300px and above); 5 Works nicely
+    window_size = 15               # wsize default 3; 5; 7 for SGBM reduced size image; 15 for SGBM full size image (1300px and above); 5 Works nicely
      
     left_matcher = cv2.StereoSGBM_create(
         minDisparity=0,
@@ -56,3 +56,6 @@ def compute_conventional_disparity(imgL, imgR):
     return filteredImg
     #cv2.waitKey()
     #cv2.destroyAllWindows()
+
+#def compute_conventional_disparity2(imgL, imgR):
+    

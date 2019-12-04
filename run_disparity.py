@@ -65,6 +65,27 @@ def compute_background_mask(left_image, right_image):
     kernel = getStructuringElement(cv2.MORPH_RECT, (30, 30))
     dilated = dilate(bg_mask, kernel)
     return dilated
+
+def calculate_depth_kernel(CAMERA_FOCAL_LENGTH_PIX,DIST_BW_CAMERAS_M, row1,col1,row2,col2,ksize, disparity):
+    col = math.floor(col1+(col2-col1)/2)
+    row = math.floor(row1+(row2-row1)/2)
+    
+    vals = []
+
+    for r in range(row-ksize,row+ksize):
+        for c in range(col-ksize,col+ksize):
+            if disparity[r][c]!=0:
+                vals.append(disparity[r][c]) 
+    
+    dist = np.mean(vals)
+    if dist == 0:
+        return "Far"
+    return CAMERA_FOCAL_LENGTH_PIX*DIST_BW_CAMERAS_M/dist
+
+def calculate_depth(CAMERA_FOCAL_LENGTH_PIX,DIST_BW_CAMERAS_M,dist):
+    if dist == 0:
+        return "Far"
+    return CAMERA_FOCAL_LENGTH_PIX*DIST_BW_CAMERAS_M/dist
 #################################################################################################
 
 ###########################################Main##################################################
@@ -75,11 +96,11 @@ if __name__=='__main__':
     cap2 = cv2.VideoCapture(r'..\videos\wheelhouse_bowfar2_cut.mp4')
     #cap1 = cv2.VideoCapture(r'..\videos\wheelhouse_bowfar1_night.avi')
     #cap2 = cv2.VideoCapture(r'..\videos\wheelhouse_bowfar2_night.avi')
-    cap1.grab()
-    cap2.grab()
-    print(cap1)
-    print(cap2)
-    cuda_flag = 1
+    #cap1.grab()
+    #cap2.grab()
+    #print(cap1)
+    #print(cap2)
+    cuda_flag = 0
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     height = int(cap1.get(cv2.CAP_PROP_FRAME_HEIGHT))
     width = int(cap1.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -93,7 +114,7 @@ if __name__=='__main__':
     
     CAMERA_FOCAL_LENGTH_PIX = (CAMERA_FOCAL_LENGTH_MM*width)/CAMERA_SENSOR_WIDTH_MM
     while(True):
-        if count == 5:
+        if count == 1:
             break
         count = count + 1
         #left_img, right_img = cv2.imread("./tsucuba_left.png"), cv2.imread("./tsucuba_right.png")
@@ -122,23 +143,25 @@ if __name__=='__main__':
          
         test_point2 = disparity_img[1500][1000]
         print(test_point1,test_point2)
-        if(test_point1 == 0):
-            d1 = "Far"
-        else:
-            d1 = CAMERA_FOCAL_LENGTH_PIX*DIST_BW_CAMERAS_M/test_point1
-        if(test_point2 == 0):
-            d2 = "Far"
-        else:
-            d2 = CAMERA_FOCAL_LENGTH_PIX*DIST_BW_CAMERAS_M/test_point2
-        colored_disparity = cv2.cvtColor(disparity_img,cv2.COLOR_GRAY2RGB).astype(np.uint8)
-        print(np.amin(np.asarray(disparity_img)))
+        #if(test_point1 == 0):
+        #    d1 = "Far"
+        #else:
+        #d1 = calculate_depth(CAMERA_FOCAL_LENGTH_PIX,DIST_BW_CAMERAS_M, test_point1)
+        #if(test_point2 == 0):
+        #    d2 = "Far"
+        #else:
+        #d2 = calculate_depth(CAMERA_FOCAL_LENGTH_PIX,DIST_BW_CAMERAS_M, test_point2)
+        d1 = calculate_depth_kernel(CAMERA_FOCAL_LENGTH_PIX,DIST_BW_CAMERAS_M, 500,500,700,700,3, disparity_img)
+        #d2 = calculate_depth_kernel(CAMERA_FOCAL_LENGTH_PIX,DIST_BW_CAMERAS_M, row1,col1,row2,col2,3, disparity_img)
+        colored_disparity = cv2.cvtColor(disparity_img*5,cv2.COLOR_GRAY2RGB).astype(np.uint8)
+        #print(np.amin(np.asarray(disparity_img)))
         #disparity_img.convertTo(image0, CV_32FC3, 1/255.0);
         #test_point1 = (np.asarray(disparity_img)/255)[300][100]
         #test_point2 = (np.asarray(disparity_img)/255)[1500][1000]
         
         
         print("Depth of point1: " + str(d1) + " metres")
-        print("Depth of point2: " + str(d2) + " metres")
+        #print("Depth of point2: " + str(d2) + " metres")
         
         
         #print('Got : ')
