@@ -1,6 +1,6 @@
 appdirs==1.4.0
 decorator==3.4.2
-numpy==1.9.2
+numpy==1.21.0
 py==1.4.28
 pycuda==2014.1
 pytest==2.7.1
